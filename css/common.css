@@ -60,7 +60,14 @@ body {
     clear: both;
     visibility: hidden;
 }
-
+.clearfix:before {
+    content: " ";
+    display: block;
+    font-size: 0;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
 
 
 
