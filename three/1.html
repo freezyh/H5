@@ -17,7 +17,9 @@
     <div id="canvas3d"></div>
 </body>
 
-<script type="text/javascript" src="./libs/three.min.js"></script>
+
+<!-- <script type="text/javascript" src="./libs/three.min.js"></script> -->
+<!-- 当做three.min.js已经加载完，下面做了简单的处理和判断，如果上传到github就访问cdn的如果本地就访问本地的 -->
 <script>
     var width;      //渲染的宽度
     var height;     //渲染的高度
@@ -49,7 +51,6 @@
         camera.lookAt({x:0,y:0,z:0});    //相机的方向对着原点
     }
 
-    
     function initScene(){
         scene = new THREE.Scene();  //创建场景，任何物体都要添加到场景中
     }
@@ -75,6 +76,37 @@
         renderer.clear();
         renderer.render(scene,camera);
     }
-    threeStart();
+</script>
+<script type="text/javascript">
+    /* 
+        根据host判断是否是本地服务器 
+        three.min.js都是87版本的
+    */
+    var host = window.location.host;
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    if(host == "localhost" || host == ""){
+        script.src = "./libs/three.min.js";
+    }else{
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js";
+    }
+    /* 
+        其实直接script.onload就可以了
+        加载完才执行threeStart();
+    */
+    if (script.readyState) {
+      script.onreadystatechange = function () {
+        if (script.readyState == "loaded" || script.readyState == "complete") {
+          script.onreadystatechange = null;
+          threeStart();
+        }
+      };
+    } else {
+      script.onload = function () {
+        threeStart();
+      };
+    }
+    
+    document.body.appendChild(script);
 </script>
 </html>
