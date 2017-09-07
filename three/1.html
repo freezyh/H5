@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>基本</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"> 
+    <style type="text/css">
+        *{margin: 0; padding: 0;}
+       canvas{ display: block; }  /*防止产生滚动*/
+    </style>
+</head>
+
+<body>
+    <div id="canvas3d"></div>
+</body>
+
+<script type="text/javascript" src="./libs/three.min.js"></script>
+<script>
+    var width;      //渲染的宽度
+    var height;     //渲染的高度
+    var renderer;   //渲染器
+    var camera;     //相机
+    var scene;      //场景
+    var light;      //灯光
+    var cube;       //几何体
+
+    function initThree(){
+        width = window.innerWidth;              //初始化渲染器的宽度             
+        height = window.innerHeight;            //初始化渲染器的高度
+        renderer = new THREE.WebGLRenderer({antialias:true}); //antialias是否抗锯齿
+        renderer.setSize(width,height);         //设置渲染的宽高
+        document.getElementById("canvas3d").appendChild(renderer.domElement); //渲染器元素添加到div中
+        renderer.setClearColor(0xFFFFFF,1);     //渲染背景色和透明度
+    }
+    
+    function initCamera(){
+        camera = new THREE.PerspectiveCamera(45,width/height,1,1000);  //初始化相机的视角、宽高比、近距离、远距离
+        camera.position.x = 100;    //相机在三维坐标的x轴
+        camera.position.y = 100;    //相机在三维坐标的y轴
+        camera.position.z = 100;    //相机在三维坐标的z轴
+
+        camera.up.x = 0;            //相机的上方的方向向量(0,1,0),可以想象成相机的上方式朝向y轴
+        camera.up.y = 1;            //可以尝试把向量改成(0,-1,0),看到就是之前倒过来看到的
+        camera.up.z = 0;
+
+        camera.lookAt({x:0,y:0,z:0});    //相机的方向对着原点
+    }
+
+    
+    function initScene(){
+        scene = new THREE.Scene();  //创建场景，任何物体都要添加到场景中
+    }
+    
+    function initLight(){           //创建平行光，颜色、强度值【如果强度值0，物体都黑色，我是这么理解的】
+        light = new THREE.DirectionalLight(0xFFFFFF,0);
+        light.position.set(100,100,200);   //光源的位置
+        scene.add(light);                  //把光添加到场景中
+    }
+    
+    function initObject(){   //网格模型：几何体+材质
+        cube = new THREE.Mesh(new THREE.CubeGeometry(50,50,50),
+            new THREE.MeshLambertMaterial({color:0xff00000}));
+        scene.add(cube);
+        cube.position.set(0,0,0);   //几何体的位置
+    }
+    function threeStart(){
+        initThree();
+        initCamera();
+        initScene();
+        initLight();
+        initObject();
+        renderer.clear();
+        renderer.render(scene,camera);
+    }
+    threeStart();
+</script>
+</html>
