@@ -55,7 +55,7 @@
     }
     
     function initLight(){           //创建平行光，颜色、强度值【如果强度值0，物体都黑色，我是这么理解的】
-        light = new THREE.DirectionalLight(0xFFFFFF,0);
+        light = new THREE.DirectionalLight(0xFFFFFF,1);
         light.position.set(100,100,200);   //光源的位置
         scene.add(light);                  //把光添加到场景中
     }
