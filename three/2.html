@@ -31,6 +31,7 @@
         width = window.innerWidth;              //初始化渲染器的宽度             
         height = window.innerHeight;            //初始化渲染器的高度
         renderer = new THREE.WebGLRenderer({antialias:true});; //antialias是否抗锯齿
+        renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize(width,height);         //设置渲染的宽高
         document.getElementById("canvas3d").appendChild(renderer.domElement); //渲染器元素添加到div中
         renderer.setClearColor(new THREE.Color(0xEEEEEE),1);     //渲染背景色和透明度
@@ -53,7 +54,7 @@
 
         var axes = new THREE.AxisHelper(20);
         scene.add(axes);
-     
+
         var planeGeometry = new THREE.PlaneGeometry(60, 20);
         var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
