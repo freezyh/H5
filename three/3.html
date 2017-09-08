@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>demo阴影</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"> 
+    <style type="text/css">
+        *{margin: 0; padding: 0;}
+       canvas{ display: block; }  /*防止产生滚动*/
+    </style>
+</head>
+
+<body>
+    <div id="canvas3d"></div>
+</body>
+
+
+<!-- <script type="text/javascript" src="./libs/three.min.js"></script> -->
+<!-- 当做three.min.js已经加载完，下面做了简单的处理和判断，如果上传到github就访问cdn的如果本地就访问本地的，为了提高访问速度 -->
+<script>
+    var width;      //渲染的宽度
+    var height;     //渲染的高度
+    var renderer;   //渲染器
+    var camera;     //相机
+    var scene;      //场景
+
+    function initThree(){
+        width = window.innerWidth;              //初始化渲染器的宽度             
+        height = window.innerHeight;            //初始化渲染器的高度
+        renderer = new THREE.WebGLRenderer({antialias:true});; //antialias是否抗锯齿
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize(width,height);         //设置渲染的宽高
+        renderer.shadowMap.enabled = true       //启动阴影选项
+        document.getElementById("canvas3d").appendChild(renderer.domElement); //渲染器元素添加到div中
+        renderer.setClearColor(new THREE.Color(0xEEEEEE),1);     //渲染背景色和透明度
+    }
+    
+    function initScene(){
+        scene = new THREE.Scene();  //创建场景，任何物体都要添加到场景中
+    }
+
+    function initCamera(){
+        camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);  //初始化相机的视角、宽高比、近距离、远距离
+        camera.position.x = -30;
+        camera.position.y = 40;
+        camera.position.z = 10;
+        camera.lookAt(scene.position);
+    }
+    
+    
+    function initObject(){   
+
+        var axes = new THREE.AxisHelper(20);
+        scene.add(axes);
+
+        var planeGeometry = new THREE.PlaneGeometry(60, 20);
+        var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.x = 10;
+        plane.position.y = 0;
+        plane.position.z = 0;
+        plane.receiveShadow = true;
+
+        scene.add(plane);
+
+        var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+        var cubeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+        var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+        cube.position.x = -4;
+        cube.position.y = 3;
+        cube.position.z = 0;
+        cube.castShadow = true;
+
+        scene.add(cube);
+
+        var sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
+        var sphereMaterial = new THREE.MeshBasicMaterial({color: 0x7777ff, wireframe: true});
+        var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+        sphere.position.x = 20;
+        sphere.position.y = 4;
+        sphere.position.z = 2;
+        sphere.castShadow = true;
+
+        scene.add(sphere);
+    }
+    function initLight(){
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(-40, 60, -10);
+        spotLight.castShadow = true;
+        scene.add(spotLight);
+    }
+    function threeStart(){
+        initThree();
+        initScene();
+        initCamera();
+        initObject();
+        initLight();
+        renderer.clear();
+        renderer.render(scene,camera);
+    }
+</script>
+
+<script type="text/javascript">
+    /* 
+        根据host判断是否是本地服务器 
+        three.min.js都是87版本的
+    */
+function loadScript(callback){
+    var host = window.location.host;
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    if(host == "localhost" || host == ""){
+        script.src = "./libs/three.min.js";
+    }else{
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/87/three.min.js";
+    }
+    /* 
+        其实直接script.onload就可以了
+        加载完才执行threeStart();
+    */
+    if (script.readyState) {
+      script.onreadystatechange = function () {
+        if (script.readyState == "loaded" || script.readyState == "complete") {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else {
+      script.onload = function () {
+        callback();
+      };
+    }
+    document.body.appendChild(script);
+}
+loadScript(threeStart);
+</script>
+</html>
