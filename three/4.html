@@ -36,6 +36,7 @@ function init() {
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
+        renderer.setPixelRatio( window.devicePixelRatio );
 
         var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
         var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
