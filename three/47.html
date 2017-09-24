@@ -24,29 +24,38 @@
 <script type="text/javascript" src="./libs/extend/dat.gui.js"></script>
 <script type="text/javascript">
 
+    // once everything is loaded, we run our Three.js stuff.
     function init() {
 
         var stats = initStats();
 
+        // create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
 
+        // create a camera, which defines where we're looking at.
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
+        // create a render and set the size
         var webGLRenderer = new THREE.WebGLRenderer();
         webGLRenderer.setClearColor(0xEEEEEE, 1.0);
         webGLRenderer.setSize(window.innerWidth, window.innerHeight);
         webGLRenderer.shadowMap.enabled = true;
         webGLRenderer.setPixelRatio( window.devicePixelRatio );
 
-        var polyhedron = createMesh(new THREE.IcosahedronGeometry(10, 0));
-        // add the sphere to the scene
-        scene.add(polyhedron);
-
         // position and point the camera to the center of the scene
         camera.position.x = -30;
-        camera.position.y = 40;
+        camera.position.y = 50;
         camera.position.z = 50;
-        camera.lookAt(new THREE.Vector3(10, 0, 0));
+        camera.lookAt(new THREE.Vector3(10, -20, 0));
+
+        var spotLight = new THREE.DirectionalLight();
+        spotLight.position = new THREE.Vector3(-20, 250, -50);
+        spotLight.target.position.x = 30;
+        spotLight.target.position.y = -40;
+        spotLight.target.position.z = -20;
+        spotLight.intensity = 0.3;
+
+        scene.add(spotLight);
 
         // add the output of the renderer to the html element
         document.getElementById("canvas3d").appendChild(webGLRenderer.domElement);
@@ -57,75 +66,69 @@
 
         // setup the control gui
         var controls = new function () {
-            // we need the first child, since it's a multimaterial
-            this.radius = 10;
-            this.detail = 0;
-            this.type = 'Icosahedron';
 
-
-            this.redraw = function () {
-                // remove the old plane
-                scene.remove(polyhedron);
-                // create a new one
-
-                switch (controls.type) {
-                    case 'Icosahedron':
-                        polyhedron = createMesh(new THREE.IcosahedronGeometry(controls.radius, controls.detail));
-                        break;
-                    case 'Tetrahedron':
-                        polyhedron = createMesh(new THREE.TetrahedronGeometry(controls.radius, controls.detail));
-                        break;
-                    case 'Octahedron':
-                        polyhedron = createMesh(new THREE.OctahedronGeometry(controls.radius, controls.detail));
-                        break;
-                    case 'Dodecahedron':
-                        polyhedron = createMesh(new THREE.DodecahedronGeometry(controls.radius, controls.detail));
-                        break;
-                    case 'Custom':
-                        var vertices = [
-                            1, 1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1
-                        ];
-
-                        var indices = [
-                            2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1
-                        ];
-
-                        polyhedron = createMesh(new THREE.PolyhedronGeometry(vertices, indices, controls.radius, controls.detail));
-                        break;
-                }
-
-                // add it to the scene.
-                scene.add(polyhedron);
-            };
         };
 
         var gui = new dat.GUI();
-        gui.add(controls, 'radius', 0, 40).step(1).onChange(controls.redraw);
-        gui.add(controls, 'detail', 0, 3).step(1).onChange(controls.redraw);
-        gui.add(controls, 'type', ['Icosahedron', 'Tetrahedron', 'Octahedron', 'Dodecahedron', 'Custom']).onChange(controls.redraw);
 
+
+        klein = function (u, v) {
+            u *= Math.PI;
+            v *= 2 * Math.PI;
+
+            u = u * 2;
+            var x, y, z;
+            if (u < Math.PI) {
+                x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(u) * Math.cos(v);
+                z = -8 * Math.sin(u) - 2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v);
+            } else {
+                x = 3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(v + Math.PI);
+                z = -8 * Math.sin(u);
+            }
+
+            y = -2 * (1 - Math.cos(u) / 2) * Math.sin(v);
+
+            return new THREE.Vector3(x, y, z);
+        };
+
+        radialWave = function (u, v) {
+            var r = 50;
+
+            var x = Math.sin(u) * r;
+            var z = Math.sin(v / 2) * 2 * r;
+            var y = (Math.sin(u * 4 * Math.PI) + Math.cos(v * 2 * Math.PI)) * 2.8;
+
+            return new THREE.Vector3(x, y, z);
+        };
+
+        var mesh = createMesh(new THREE.ParametricGeometry(radialWave, 120, 120, false));
+        scene.add(mesh);
 
         render();
 
+
         function createMesh(geom) {
-
+            geom.applyMatrix(new THREE.Matrix4().makeTranslation(-25, 0, -25));
             // assign two materials
-            var meshMaterial = new THREE.MeshNormalMaterial();
+//            var meshMaterial = new THREE.MeshLambertMaterial({color: 0xff5555});
+            //var meshMaterial = new THREE.MeshNormalMaterial();
+            var meshMaterial = new THREE.MeshPhongMaterial({
+                specular: 0xaaaafff,
+                color: 0x3399ff,
+                shininess: 40,
+                metal: true
+            });
             meshMaterial.side = THREE.DoubleSide;
-            var wireFrameMat = new THREE.MeshBasicMaterial();
-            wireFrameMat.wireframe = true;
-
             // create a multimaterial
-            var mesh = THREE.SceneUtils.createMultiMaterialObject(geom, [meshMaterial, wireFrameMat]);
+            var plane = THREE.SceneUtils.createMultiMaterialObject(geom, [meshMaterial]);
 
-            return mesh;
+            return plane;
         }
 
         function render() {
             stats.update();
-
-            polyhedron.rotation.y = step += 0.01;
-
+            mesh.rotation.y = step += 0.01;
+            mesh.rotation.x = step;
             // render using requestAnimationFrame
             requestAnimationFrame(render);
             webGLRenderer.render(scene, camera);
@@ -135,6 +138,7 @@
 
             var stats = new Stats();
             stats.setMode(0); // 0: fps, 1: ms
+
 
             // Align top-left
             stats.domElement.style.position = 'absolute';
