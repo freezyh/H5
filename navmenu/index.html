@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>menu</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<style type="text/css">
+	*{margin: 0; padding: 0;}
+	a{ text-decoration: none;}
+	a:hover{
+		cursor: pointer;
+	}
+	.header{ 
+		position: fixed;
+	    width: 100%;
+	    height: 70px;
+	    z-index: 10;
+	    top: 0;
+	    left: 0;
+	    background: #1a1f21;
+	}
+	.header .nav{ 
+		display: flex;
+		height: 100%;
+		align-items: center;
+		width: 92%;    
+    	margin: 0 auto;
+    }
+	.header .nav ul{ 
+		display: flex;
+		width: 50%;
+		margin: 0 auto;
+		list-style: none; 
+	}
+	.header .nav ul li{
+		flex-grow: 1;
+		text-align: center;
+	}
+	.header .nav ul li a{
+		display: inline-block;
+	    font-family: "stratum","Arial Narrow","Trebuchet MS",sans-serif;
+	    line-height: 2;
+	    font-weight: 700;
+	    color: #fff;
+	    position: relative;
+	    padding: 5px;
+	    transition: all .4s ease-out;
+	}
+	.nav a:after {
+	    content: '';
+	    display: block;
+	    position: absolute;
+	    width: 100%;
+	    height: 2px;
+	    bottom: 0;
+	    left: 0;
+	    z-index: 1;
+	    opacity: 1;
+	    background: linear-gradient(to right, #E67207 0%, #EF4E7B 50%, #A166AB 100%);
+	    transform-origin: center;
+	    transform: scaleX(0);
+	    transition: transform .4s ease-out;
+	}
+	.nav a:hover:after {
+    	transform: scaleX(1);
+	}
+
+</style>
+</head>
+<body>
+	<div class="header">
+	    <div class="nav">
+	        <ul>
+	            <li><a href="javascript:;">菜单1</a></li>
+	            <li><a href="javascript:;">菜单2</a></li>
+	            <li><a href="javascript:;">菜单3</a></li>
+	            <li><a href="javascript:;">菜单4</a></li>
+	            <li><a href="javascript:;">菜单5</a></li>
+	        </ul>
+	    </div>
+	</div>
+</body>
+</html>
