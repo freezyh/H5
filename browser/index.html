@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> -->
+    <title>javascript</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="yes" name="apple-touch-fullscreen" />
+    <link href="" rel="stylesheet">
+    <style type="text/css">
+    * {
+        margin: 0;
+        padding: 0
+    }
+    #div1 {
+        width: 300px;
+        height: 300px;
+        background-color: #ccc;/*一定要绝对定位*/
+        position: absolute;
+    }
+    </style>
+</head>
+<body>
+    <div id="div1"></div>
+</body>
+<script>
+ window.onload = function(){
+　　var div1 = document.getElementById("div1");
+　　div1.onmousedown = function(ev){
+　　　　var oevent = ev || event;
+
+　　　　var distanceX = oevent.clientX - div1.offsetLeft;
+　　　　var distanceY = oevent.clientY - div1.offsetTop;
+
+　　　　document.onmousemove = function(ev){
+　　　　　　var oevent = ev || event;
+　　　　　　div1.style.left = oevent.clientX - distanceX + 'px';
+　　　　　　div1.style.top = oevent.clientY - distanceY + 'px'; 
+　　　　};
+　　　　document.onmouseup = function(){
+　　　　　　document.onmousemove = null;
+　　　　　　document.onmouseup = null;
+　　　　};
+　　}
+};
+
+
+
+
+</script>
+
+</html>
