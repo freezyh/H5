@@ -73,13 +73,13 @@
         camera.position.y = 30;
         camera.position.z = 25;
         camera.lookAt(new THREE.Vector3(10, 0, 0));
-
-        var ambiColor = "#0c0c0c";
+       
+        var ambiColor = "#c0c0c0";
         var ambientLight = new THREE.AmbientLight(ambiColor);
         scene.add(ambientLight);
+     
 
-
-        var spotLight = new THREE.SpotLight(0xffffff);
+        var spotLight = new THREE.SpotLight(0xf0f0ff);
         spotLight.position.set(-40, 60, -10);
         spotLight.castShadow = true;
         scene.add(spotLight);
@@ -103,11 +103,12 @@
     				ms.position.z = 0;
     				scene.add(object);
     				console.log(111111);
+                    object.castShadow = true;
     			}
     		);
     	});
-
-
+   
+     /*
         var fbx2 = new THREE.FBXLoader();
             // 加载一个资源
         fbx2.load(
@@ -117,9 +118,10 @@
             function(objects1) {
             // objects1.position.z=100;
                 objects1.scale.set(1,1,1);
+                objects1.castShadow = true;
                 scene.add(objects1);
             });
-
+    */
 
 
 
