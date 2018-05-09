@@ -27,10 +27,11 @@
 <script src="MTLLoader.js" type="text/javascript" charset="utf-8"></script>
 <script src="OBJLoader.js" type="text/javascript" charset="utf-8"></script>
 <script src="CanvasRenderer.js" type="text/javascript" charset="utf-8"></script>
-
+<script src="OrbitControls.js" type="text/javascript" charset="utf-8"></script>
 
 <script type="text/javascript">
-
+    var container;
+    var controlsOrb;
     function init() {
 
         var scene = new THREE.Scene();
@@ -65,7 +66,7 @@
         cube.position.y = 3;
         cube.position.z = 0;
 
-        scene.add(cube);
+        //scene.add(cube);
 
         
         camera.position.x = -25;
@@ -84,35 +85,37 @@
         scene.add(spotLight);
 
 
+
+
     	mt = new THREE.MTLLoader();
-	mt.load('src/she-shou.mtl', function(m) {
-		m.preload();
-		var loader = new THREE.OBJLoader();
-		loader.setMaterials(m);
-		// 加载一个资源
-		loader.load(
-			// 资源链接
-			'src/she-shou.obj',
-			// 资源加载完成后的回调函数
-			function(object) {
-				object.scale.set(1, 1, 1);
-				ms = object;
-				ms.position.z = 0;
-				scene.add(object);
-				console.log(111111);
-			}
-		);
-	});
+    	mt.load('src/she-shou.mtl', function(m) {
+    		m.preload();
+    		var loader = new THREE.OBJLoader();
+    		loader.setMaterials(m);
+    		// 加载一个资源
+    		loader.load(
+    			// 资源链接
+    			'src/she-shou.obj',
+    			// 资源加载完成后的回调函数
+    			function(object) {
+    				object.scale.set(1, 1, 1);
+    				ms = object;
+    				ms.position.z = 0;
+    				scene.add(object);
+    				console.log(111111);
+    			}
+    		);
+    	});
 
 
-    var fbx2 = new THREE.FBXLoader();
-        // 加载一个资源
+        var fbx2 = new THREE.FBXLoader();
+            // 加载一个资源
         fbx2.load(
             // 资源链接
             'src/ashe@attack1.fbx',
             // 资源加载完成后的回调函数
             function(objects1) {
-//              objects1.position.z=100;
+            // objects1.position.z=100;
                 objects1.scale.set(1,1,1);
                 scene.add(objects1);
             });
@@ -120,9 +123,20 @@
 
 
 
+        container = document.getElementById("canvas3d");
 
 
-        document.getElementById("canvas3d").appendChild(renderer.domElement);
+        controlsOrb = new THREE.OrbitControls(camera, container);
+        controlsOrb.target.set(0, 1, 0);
+        controlsOrb.update();
+        controlsOrb.rotateSpeed = 0.2;
+        //controlsOrb.maxPolarAngle = Math.PI/2;
+        controlsOrb.enableDamping = true;
+        controlsOrb.dampingFactor = 0.1;
+        controlsOrb.autoRotate = true;
+        controlsOrb.autoRotateSpeed = 0.2;
+
+        container.appendChild(renderer.domElement);
 
         var step = 0;
 
@@ -150,7 +164,7 @@
             cube.rotation.y += controls.rotationSpeed;
             cube.rotation.z += controls.rotationSpeed;
 
-      
+            controlsOrb.update();
 
             requestAnimationFrame(render);
             renderer.render(scene, camera);
