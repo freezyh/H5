@@ -45,11 +45,11 @@
         renderer.shadowMap.enabled = true;
         renderer.setPixelRatio( window.devicePixelRatio );
 
-        var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
-        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+        var planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xc2c2c2});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
-
+        plane.castShadow = true;
         plane.rotation.x = -0.5 * Math.PI;
         plane.position.x = 15;
         plane.position.y = 0;
@@ -66,7 +66,7 @@
         cube.position.y = 3;
         cube.position.z = 0;
 
-        //scene.add(cube);
+        // scene.add(cube);
 
         
         camera.position.x = 0;
@@ -74,15 +74,17 @@
         camera.position.z = 50;
         camera.lookAt(new THREE.Vector3(10, 0, 0));
        
-        var ambiColor = "#c0c0c0";
-        var ambientLight = new THREE.AmbientLight(ambiColor);
+        
+        var ambientLight = new THREE.AmbientLight(new THREE.Color(0xffffff));
         scene.add(ambientLight);
      
-
-        var spotLight = new THREE.SpotLight(0xf0f0ff);
-        spotLight.position.set(-40, 60, -10);
+        
+        var spotLight = new THREE.SpotLight(0xf0f0f0);
+        spotLight.position.set( 0, 20, 20 );
         spotLight.castShadow = true;
         scene.add(spotLight);
+
+
 
 
 
@@ -90,6 +92,8 @@
     	mt = new THREE.MTLLoader();
     	mt.load('src/she-shou.mtl', function(m) {
     		m.preload();
+            m.castShadow = true;
+            m.receiveShadow = true;
     		var loader = new THREE.OBJLoader();
     		loader.setMaterials(m);
     		// 加载一个资源
@@ -101,11 +105,20 @@
     				object.scale.set(1, 1, 1);
     				ms = object;
     				ms.position.z = 0;
+                    for(var k in object.children){  
+                        console.log(object.children)
+                    //由于我们的素材并不是看上去的一个整体，所以需要进行迭代
+                 //对其中的所有孩子都设置接收阴影以及投射阴影
+                 //才能看到阴影效果
+                         object.children[k].castShadow = true;   //设置该对象可以产生阴影
+                         object.children[k].receiveShadow = true;  //设置该对象可以接收阴影
+                     }
     				scene.add(object);
-    				console.log(111111);
-                    object.castShadow = true;
+    				console.log(111111);  
+
     			}
     		);
+            
     	});
    
      /*
@@ -122,6 +135,7 @@
                 scene.add(objects1);
             });
     */
+
 
 
 
@@ -145,7 +159,7 @@
         var controls = new function () {
             this.rotationSpeed = 0.02;
             this.bouncingSpeed = 0.03;
-            this.ambientColor = ambiColor;
+           // this.ambientColor = ambiColor;
             this.disableSpotlight = false;
         };
        /*
@@ -175,6 +189,7 @@
 
     }
 
+ 
     window.onload = init
 
 
