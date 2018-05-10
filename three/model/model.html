@@ -26,7 +26,7 @@
 <script src="FBXLoader.js" type="text/javascript" charset="utf-8"></script>
 <script src="MTLLoader.js" type="text/javascript" charset="utf-8"></script>
 <script src="OBJLoader.js" type="text/javascript" charset="utf-8"></script>
-<script src="CanvasRenderer.js" type="text/javascript" charset="utf-8"></script>
+<!-- <script src="CanvasRenderer.js" type="text/javascript" charset="utf-8"></script> -->
 <script src="OrbitControls.js" type="text/javascript" charset="utf-8"></script>
 
 <script type="text/javascript">
@@ -38,11 +38,13 @@
 
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-        var renderer = new THREE.WebGLRenderer();
+        var renderer = new THREE.WebGLRenderer({antialias: true});
 
         renderer.setClearColor(0xEEEEEE, 1.0);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
+        // renderer.shadowMapSoft = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.setPixelRatio( window.devicePixelRatio );
 
         var planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
@@ -66,7 +68,7 @@
         cube.position.y = 3;
         cube.position.z = 0;
 
-        // scene.add(cube);
+        scene.add(cube);
 
         
         camera.position.x = 0;
@@ -81,7 +83,8 @@
         
         var spotLight = new THREE.SpotLight(0xf0f0f0);
         spotLight.position.set( 0, 20, 20 );
-        spotLight.castShadow = true;                 
+        spotLight.castShadow = true;  
+
         scene.add(spotLight);
 
 
@@ -111,7 +114,7 @@
                  //对其中的所有孩子都设置接收阴影以及投射阴影
                  //才能看到阴影效果
                          object.children[k].castShadow = true;   //设置该对象可以产生阴影
-                         object.children[k].receiveShadow = true;  //设置该对象可以接收阴影
+                        object.children[k].receiveShadow = true;  //设置该对象可以接收阴影
                      }
     				scene.add(object);
     				console.log(111111);  
